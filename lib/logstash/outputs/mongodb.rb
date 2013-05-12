@@ -63,9 +63,11 @@ class LogStash::Outputs::Mongodb < LogStash::Outputs::Base
         document = event.to_hash
       end
       if @atchop
+        d = {}
         document.each { |key, value| d[key.sub(/^@/, '')] = value }
         document.replace(d)
       end
+
       @mongodb.collection(event.sprintf(@collection)).insert(document)
     rescue => e
       @logger.warn("Failed to send event to MongoDB", :event => event, :exception => e,
